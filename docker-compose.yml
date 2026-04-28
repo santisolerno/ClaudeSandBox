@@ -1,0 +1,38 @@
+# Docker Compose para desarrollo local (Win + Mac).
+# Levanta backend (FastAPI con --reload) y frontend (Vite con HMR).
+# Producción se despliega en DO App Platform usando los Dockerfile de cada servicio.
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: claudesandbox-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Bind mount: cambios en backend/ se reflejan instantáneamente en el container.
+      - ./backend:/app
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    # Sobreescribe el CMD del Dockerfile para activar hot-reload en dev.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev # usa el stage `dev` del Dockerfile multi-stage
+    container_name: claudesandbox-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      # Bind mount del código...
+      - ./frontend:/app
+      # ...pero preservamos node_modules instalados en la imagen
+      # (evita que el bind mount los oculte y rompa Win/Mac).
+      - /app/node_modules
+    environment:
+      # URL del backend que el browser usa (no el container).
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend

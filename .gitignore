@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env files (cada subproyecto tiene los suyos también)
+.env
+.env.*
+!.env.example
+
+# Docker
+*.local
