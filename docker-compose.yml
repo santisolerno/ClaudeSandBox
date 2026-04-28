@@ -12,6 +12,9 @@ services:
     volumes:
       # Bind mount: cambios en backend/ se reflejan instantáneamente en el container.
       - ./backend:/app
+    env_file:
+      # Variables sensibles (AUTH_USER, AUTH_PASSWORD). En prod las setea DO App Platform.
+      - ./backend/.env
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1

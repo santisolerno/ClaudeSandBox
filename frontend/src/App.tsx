@@ -1,23 +1,20 @@
-import { useEffect, useState } from "react";
-
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+import { useState } from "react";
+import Login from "./Login";
+import Welcome from "./Welcome";
 
 function App() {
-  const [message, setMessage] = useState<string>("Cargando...");
-
-  useEffect(() => {
-    fetch(`${API_URL}/`)
-      .then((r) => r.json())
-      .then((data) => setMessage(data.message))
-      .catch((err) => setMessage(`Error: ${err.message}`));
-  }, []);
+  const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null);
 
   return (
     <main>
-      <h1>ClaudeSandBox</h1>
-      <p>
-        Backend dice: <strong>{message}</strong>
-      </p>
+      {welcomeMessage === null ? (
+        <Login onSuccess={setWelcomeMessage} />
+      ) : (
+        <Welcome
+          message={welcomeMessage}
+          onLogout={() => setWelcomeMessage(null)}
+        />
+      )}
     </main>
   );
 }

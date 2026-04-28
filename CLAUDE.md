@@ -20,6 +20,41 @@ Repositorio de pruebas que combina en un único monorepo:
 
 ## Historial de sesiones
 
+### 2026-04-28 — Login básico y primer ida-y-vuelta frontend ↔ backend
+
+**Objetivo:** validar el camino end-to-end con dos pantallas: una de login y otra que muestra una respuesta del backend tras autenticarse.
+
+**Decisiones:**
+- **Validación de credenciales en el backend**, no en el frontend. Se descartó tener las credenciales en `VITE_*` (visibles en el bundle) por la opción más segura: backend lee `AUTH_USER` / `AUTH_PASSWORD` desde `.env` y nunca llegan al cliente.
+- Comparación con `secrets.compare_digest` (timing-safe), no `==`.
+- Sin librería de routing todavía: dos pantallas + `useState` alcanzan para esta etapa. Cuando aparezca la tercera ruta migramos a `react-router`.
+
+**Cambios realizados:**
+- **Backend:**
+  - `POST /login` en `app/main.py` con `LoginRequest` / `LoginResponse` (Pydantic). Devuelve `{"message": "bienvenido"}` o 401.
+  - `backend/.env.example` con `AUTH_USER=doadmin` y `AUTH_PASSWORD=playground` (template comiteado).
+  - `backend/.env` con los mismos valores (gitignored).
+- **Frontend:**
+  - `src/api.ts` cliente fetch que mapea 401 a "Credenciales inválidas".
+  - `src/Login.tsx` con form controlado, estados de `loading` / `error`.
+  - `src/Welcome.tsx` que muestra el mensaje del back + botón de logout.
+  - `src/App.tsx` ahora hace switch entre ambas según `welcomeMessage`.
+  - `src/index.css` ampliado con estilos dark del form, botones y mensajes de error.
+- **Compose:**
+  - Service `backend` ahora carga `./backend/.env` con `env_file`.
+
+**Verificado:**
+- `curl POST /login` con `doadmin`/`playground` → `200 {"message":"bienvenido"}`.
+- `curl POST /login` con credenciales inválidas → `401 {"detail":"Credenciales inválidas"}`.
+- Vite HMR actualizó el frontend sin reiniciar el container.
+
+**Pendientes / próximos pasos:**
+- Probar el flujo end-to-end desde el browser en Mac y Windows.
+- Considerar persistir la sesión (token / cookie) cuando aparezcan más rutas protegidas — por ahora `welcomeMessage` vive en estado de React y se pierde al refrescar.
+- Cuando haya más de 2 pantallas, mover a `react-router-dom`.
+
+---
+
 ### 2026-04-28 — Stack base, Dockerización y dev cross-platform
 
 **Objetivo:** definir el stack concreto y armar el esqueleto del monorepo, garantizando que dos devs (uno en Windows, otro en Mac) puedan correr todo de forma idéntica, con un camino claro hacia el despliegue en DigitalOcean App Platform.
