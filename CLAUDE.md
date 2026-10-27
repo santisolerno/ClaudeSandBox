@@ -20,6 +20,26 @@ Repositorio de pruebas que combina en un único monorepo:
 
 ## Historial de sesiones
 
+### 2026-10-27 — App "Anticipa" para prestadores (frontend)
+
+**Objetivo:** llevar al código el diseño de Anticipa, la app móvil donde un prestador ve sus facturas abiertas y pide un adelanto sobre las que la obra social ya aprobó.
+
+**Decisiones:**
+- El diseño venía como prototipo interactivo (un canvas de Design). Lo porté a React tal como se ve, sin backend: es una demo con datos de ejemplo y toda la lógica (costos, filtros, estados de factura) vive en el cliente.
+- Me mantuve en las convenciones del front: componentes funcionales en TS, estilos en `index.css`, sin librerías nuevas.
+- El flujo de auth propio del diseño (ingresar / crear cuenta / verificación) reemplazó al login y Welcome anteriores. Saqué `Login.tsx`, `Welcome.tsx` y `api.ts` porque quedaban sin uso. El endpoint `/login` del backend sigue estando, pero ya no lo llama nadie.
+
+**Cambios realizados:**
+- `frontend/src/anticipa/data.ts`: obras sociales, facturas de ejemplo, históricos, formateadores y mapas de etiquetas/colores.
+- `frontend/src/anticipa/Anticipa.tsx`: componente raíz con todo el estado y las pantallas (inicio, facturas, simulación, confirmar, listo, comparar, cobros, más, descargo, configuración) más la hoja de filtros.
+- `frontend/src/index.css`: reescrito con el marco de teléfono (390×844) y los estilos del diseño; se eliminó el CSS del login viejo.
+- `frontend/src/App.tsx`: ahora solo renderiza `<Anticipa />`.
+- `frontend/index.html`: fuente Geist y título "Anticipa".
+
+**Pendientes / próximos pasos:**
+- No pude correr `tsc` ni `vite build` en esta máquina (no hay Node instalado y Docker Desktop estaba apagado). Queda verificar con `docker compose up --build` o `npm run build` dentro del front.
+- Para conectar la app a datos reales habría que definir endpoints en el backend (facturas, cuentas, solicitudes) y volver a un cliente tipo el `api.ts` que saqué.
+
 ### 2026-04-28 — Login básico y primer ida-y-vuelta frontend ↔ backend
 
 **Objetivo:** validar el camino end-to-end con dos pantallas: una de login y otra que muestra una respuesta del backend tras autenticarse.

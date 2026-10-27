@@ -1,22 +1,7 @@
-import { useState } from "react";
-import Login from "./Login";
-import Welcome from "./Welcome";
+import Anticipa from "./anticipa/Anticipa";
 
 function App() {
-  const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null);
-
-  return (
-    <main>
-      {welcomeMessage === null ? (
-        <Login onSuccess={setWelcomeMessage} />
-      ) : (
-        <Welcome
-          message={welcomeMessage}
-          onLogout={() => setWelcomeMessage(null)}
-        />
-      )}
-    </main>
-  );
+  return <Anticipa />;
 }
 
 export default App;
